@@ -1,10 +1,13 @@
 package com.udacity.jdnd.course3.critter.user;
 
 import com.udacity.jdnd.course3.critter.entity.Customer;
+import com.udacity.jdnd.course3.critter.entity.Employee;
 import com.udacity.jdnd.course3.critter.entity.Pet;
 import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.service.CustomerService;
+import com.udacity.jdnd.course3.critter.service.EmployeeService;
 import com.udacity.jdnd.course3.critter.service.PetService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +15,7 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Handles web requests related to Users.
@@ -28,6 +32,12 @@ public class UserController {
     @Autowired
     CustomerService customerService;
 
+    @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    ModelMapper modelMapper;
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
         return convertCustomer2CustomerDTO(customerService.saveCustomer(convertCustomerDTO2Customer(customerDTO)));
@@ -35,13 +45,7 @@ public class UserController {
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers() {
-        List<Customer> customers = customerService.findAllCustomers();
-
-        List<CustomerDTO> customerDTOS = new ArrayList<>();
-        for (Customer customer: customers)
-            customerDTOS.add(convertCustomer2CustomerDTO(customer));
-
-        return customerDTOS;
+        return customerService.findAllCustomers().stream().map(this::convertCustomer2CustomerDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/customer/pet/{petId}")
@@ -51,12 +55,12 @@ public class UserController {
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+        return convertEmployee2EmployeeDTO(employeeService.saveEmployee(convertEmployeeDTO2Employee(employeeDTO)));
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        return convertEmployee2EmployeeDTO(employeeService.findEmployeeById(employeeId));
     }
 
     @PutMapping("/employee/{employeeId}")
@@ -70,31 +74,20 @@ public class UserController {
     }
 
     private Customer convertCustomerDTO2Customer(CustomerDTO customerDTO) {
-        Customer customer = new Customer();
-        customer.setId(customerDTO.getId());
-        customer.setName(customerDTO.getName());
-        customer.setPhoneNumber(customerDTO.getPhoneNumber());
-        customer.setNotes(customerDTO.getNotes());
-        // Don't need to fill `pets`
-
-        return customer;
+        return modelMapper.map(customerDTO, Customer.class);
     }
 
     private CustomerDTO convertCustomer2CustomerDTO(Customer customer) {
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customer.getId());
-        customerDTO.setName(customer.getName());
-        customerDTO.setPhoneNumber(customer.getPhoneNumber());
-        customerDTO.setNotes(customer.getNotes());
-
-        // petIds
-        List<Long> petIds = new ArrayList<>();
-        if (customer.getPets() != null) {
-            for (Pet pet : customer.getPets())
-                petIds.add(pet.getId());
-        }
-        customerDTO.setPetIds(petIds);
-
+        CustomerDTO customerDTO = modelMapper.map(customer, CustomerDTO.class);
+        customerDTO.setPetIds(customer.getPets().stream().map(Pet::getId).collect(Collectors.toList()));
         return customerDTO;
+    }
+
+    private Employee convertEmployeeDTO2Employee(EmployeeDTO employeeDTO) {
+        return modelMapper.map(employeeDTO, Employee.class);
+    }
+
+    private EmployeeDTO convertEmployee2EmployeeDTO(Employee employee) {
+        return modelMapper.map(employee, EmployeeDTO.class);
     }
 }

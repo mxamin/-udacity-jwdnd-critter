@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.entity;
 
 import com.udacity.jdnd.course3.critter.pet.PetType;
+import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,13 +12,14 @@ public class Pet {
     @GeneratedValue
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     private PetType type;
 
+    @Nationalized
     private String name;
 
     private LocalDate birthDate;
 
+    @Nationalized
     private String notes;
 
     @ManyToOne

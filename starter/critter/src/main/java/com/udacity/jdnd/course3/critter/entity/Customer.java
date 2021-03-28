@@ -1,8 +1,10 @@
 package com.udacity.jdnd.course3.critter.entity;
 
 import com.udacity.jdnd.course3.critter.entity.Pet;
+import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name="Customer")
@@ -11,14 +13,16 @@ public class Customer {
     @GeneratedValue
     private Long id;
 
+    @Nationalized
     private String name;
 
     private String phoneNumber;
 
+    @Nationalized
     private String notes;
 
     @OneToMany(mappedBy = "customer")
-    private List<Pet> pets;
+    private List<Pet> pets = new ArrayList<>();
 
     public Customer() {
     }
