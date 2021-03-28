@@ -1,10 +1,12 @@
-package com.udacity.jdnd.course3.critter.user;
+package com.udacity.jdnd.course3.critter.entity;
+
+import com.udacity.jdnd.course3.critter.entity.Employee;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
 
 @Entity(name = "DayAvailable")
-public class DayAvailableEntity {
+public class DayAvailable {
     @Id
     @GeneratedValue
     private Long id;
@@ -13,5 +15,5 @@ public class DayAvailableEntity {
     private DayOfWeek day;
 
     @ManyToOne
-    private EmployeeEntity employee;
+    private Employee employee;
 }

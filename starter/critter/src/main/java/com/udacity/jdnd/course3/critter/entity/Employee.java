@@ -1,10 +1,10 @@
-package com.udacity.jdnd.course3.critter.user;
+package com.udacity.jdnd.course3.critter.entity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity(name="Employee")
-public class EmployeeEntity {
+public class Employee {
     @Id
     @GeneratedValue
     private Long id;
@@ -12,10 +12,10 @@ public class EmployeeEntity {
     private String name;
 
     @OneToMany(mappedBy = "employee")
-    private List<SkillEntity> skills;
+    private List<Skill> skills;
 
     @OneToMany(mappedBy = "employee")
-    private List<DayAvailableEntity> daysAvailable;
+    private List<DayAvailable> daysAvailable;
 
 //    @OneToMany(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "book_id"
