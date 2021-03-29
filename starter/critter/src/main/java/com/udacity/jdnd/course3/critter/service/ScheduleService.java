@@ -46,7 +46,7 @@ public class ScheduleService {
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFoundException::new);
         for (Pet pet: customer.getPets()) {
-            schedules.addAll(findAllSchedulesByPetId(pet.getId()));
+            schedules.addAll(scheduleRepository.findAllByPetsId(pet.getId()));
         }
 
         return new ArrayList<>(schedules);
